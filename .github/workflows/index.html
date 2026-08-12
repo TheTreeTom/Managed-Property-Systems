@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Managed Property Systems – Landing Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            DEFAULT: '#0F2C4C',
+                            dark: '#0A1F36',
+                            light: '#163A5E',
+                        },
+                        amber: {
+                            DEFAULT: '#F97316',
+                            dark: '#EA6A0E',
+                            light: '#FB923C',
+                        },
+                        slate: {
+                            soft: '#F8FAFC',
+                            muted: '#94A3B8',
+                        },
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                },
+            },
+        };
+    </script>
+    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --navy: #0F2C4C;
+            --navy-dark: #0A1F36;
+            --navy-light: #163A5E;
+            --amber: #F97316;
+            --amber-dark: #EA6A0E;
+            --amber-light: #FB923C;
+            --white: #FFFFFF;
+            --soft-bg: #F8FAFC;
+            --text-muted: #94A3B8;
+            --transition-speed: 0.3s;
+        }
+
+        * { font-family: 'Inter', system-ui, sans-serif; }
+
+        html { scroll-behavior: smooth; }
+
+        /* Sticky nav transition */
+        .nav-bar {
+            transition: padding var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+        }
+        .nav-bar.scrolled {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* FAQ accordion */
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s ease;
+        }
+        .faq-answer.open {
+            max-height: 300px;
+        }
+        .faq-chevron {
+            transition: transform 0.3s ease;
+        }
+        .faq-chevron.rotated {
+            transform: rotate(180deg);
+        }
+
+        /* Service card hover */
+        .service-card {
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .service-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(15, 44, 76, 0.12);
+        }
+
+        /* Pricing card */
+        .pricing-card {
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .pricing-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 48px rgba(15, 44, 76, 0.15);
+        }
+
+        /* Button hover */
+        .btn-amber {
+            transition: background-color 0.2s ease, transform 0.15s ease;
+        }
+        .btn-amber:hover {
+            background-color: var(--amber-dark);
+            transform: translateY(-1px);
+        }
+        .btn-outline {
+            transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+        }
+        .btn-outline:hover {
+            background-color: rgba(255,255,255,0.1);
+            transform: translateY(-1px);
+        }
+
+        /* Pain point card */
+        .pain-card {
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .pain-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(15, 44, 76, 0.1);
+        }
+
+        /* Audience card */
+        .audience-card {
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .audience-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(15, 44, 76, 0.12);
+        }
+
+        /* Mobile menu */
+        .mobile-menu-overlay {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .mobile-menu-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Trust badge shimmer */
+        .trust-badge {
+            position: relative;
+            overflow: hidden;
+        }
+        .trust-badge::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+            transform: translateX(-100%);
+            animation: shimmer 4s infinite;
+        }
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            50%, 100% { transform: translateX(100%); }
+        }
+
+        /* Featured pricing glow */
+        .pricing-featured {
+            box-shadow: 0 0 0 3px #F97316, 0 16px 48px rgba(249, 115, 22, 0.15);
+        }
+
+        /* Stat ticker strip */
+        .stat-pill {
+            position: relative;
+        }
+        .stat-pill::before {
+            content: '';
+            position: absolute;
+            left: -12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #F97316;
+        }
+        .stat-pill:first-child::before {
+            display: none;
+        }
+
+        /* Form focus styles */
+        .form-input:focus {
+            border-color: var(--amber);
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+            outline: none;
+        }
+
+        /* Scroll indicator animation */
+        @keyframes bounce-subtle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(4px); }
+        }
+    </style>
+</head>
+<body data-id="0" class="bg-white text-gray-900 antialiased">
+
+    <app-icon data-id="1" hidden data-icon="building-2" data-palette="Dark"></app-icon>
+
+    <!-- ===================== STICKY NAV ===================== -->
+    <header data-id="2" id="navbar-a1b2" class="nav-bar fixed top-0 left-0 right-0 z-50 bg-navy py-3 md:py-4 px-4 md:px-8">
+        <div data-id="3" class="max-w-7xl mx-auto flex items-center justify-between">
+            <!-- Logo -->
+            <div data-id="4" class="flex items-center gap-3">
+                <div data-id="5" id="logo-box-c3d4" class="w-10 h-10 md:w-11 md:h-11 bg-amber rounded-lg flex items-center justify-center">
+                    <span data-id="6" class="text-white font-black text-lg md:text-xl tracking-tight">MPS</span>
+                </div>
+                <span data-id="7" id="logo-text-e5f6" class="hidden sm:block text-white font-bold text-sm md:text-base tracking-tight leading-tight">Managed Property<br data-id="8" class="hidden lg:inline" /> Systems</span>
+            </div>
+
+            <!-- Desktop Nav -->
+            <nav data-id="9" id="desktop-nav-g7h8" class="hidden md:flex items-center gap-8">
+                <a data-id="10" href="#services" class="text-slate-muted hover:text-white text-sm font-medium transition-colors">Services</a>
+                <a data-id="11" href="#pricing" class="text-slate-muted hover:text-white text-sm font-medium transition-colors">Pricing</a>
+                <a data-id="12" href="#about" class="text-slate-muted hover:text-white text-sm font-medium transition-colors">About</a>
+                <a data-id="13" href="#contact" class="text-slate-muted hover:text-white text-sm font-medium transition-colors">Contact</a>
+            </nav>
+
+            <!-- Desktop CTA -->
+            <a data-id="14" href="#contact" id="nav-cta-i9j0" class="hidden md:inline-flex btn-amber bg-amber text-white font-semibold text-sm px-5 py-2.5 rounded-lg">
+                Free Assessment
+            </a>
+
+            <!-- Mobile Menu Button -->
+            <button data-id="15" id="mobile-menu-btn-k1l2" class="md:hidden p-2 text-white" aria-label="Open menu">
+                <i data-id="16" data-lucide="menu" class="w-6 h-6"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div data-id="17" id="mobile-menu-m3n4" class="mobile-menu-overlay fixed inset-0 bg-navy z-[60] flex flex-col p-6">
+        <div data-id="18" class="flex items-center justify-between mb-10">
+            <div data-id="19" class="flex items-center gap-3">
+                <div data-id="20" class="w-10 h-10 bg-amber rounded-lg flex items-center justify-center">
+                    <span data-id="21" class="text-white font-black text-lg">MPS</span>
+                </div>
+                <span data-id="22" class="text-white font-bold text-sm">Managed Property Systems</span>
+            </div>
+            <button data-id="23" id="mobile-menu-close-o5p6" class="p-2 text-white" aria-label="Close menu">
+                <i data-id="24" data-lucide="x" class="w-6 h-6"></i>
+            </button>
+        </div>
+        <nav data-id="25" class="flex flex-col gap-6">
+            <a data-id="26" href="#services" class="mobile-nav-link text-white text-xl font-semibold hover:text-amber transition-colors">Services</a>
+            <a data-id="27" href="#pricing" class="mobile-nav-link text-white text-xl font-semibold hover:text-amber transition-colors">Pricing</a>
+            <a data-id="28" href="#about" class="mobile-nav-link text-white text-xl font-semibold hover:text-amber transition-colors">About</a>
+            <a data-id="29" href="#contact" class="mobile-nav-link text-white text-xl font-semibold hover:text-amber transition-colors">Contact</a>
+            <a data-id="30" href="#contact" class="mobile-nav-link btn-amber bg-amber text-white font-semibold text-center text-lg px-6 py-3.5 rounded-lg mt-4">Free Assessment</a>
+        </nav>
+    </div>
+
+    <main data-id="31">
+
+        <!-- ===================== HERO SECTION ===================== -->
+        <section data-id="32" id="hero-q7r8" class="bg-navy pt-28 pb-16 md:pt-36 md:pb-24 px-4 md:px-8 relative overflow-hidden">
+            <!-- Subtle background pattern -->
+            <div data-id="33" class="absolute inset-0 opacity-[0.03]" style="background-image: radial-gradient(circle at 1px 1px, white 1px, transparent 0); background-size: 40px 40px;"></div>
+            <div data-id="34" class="max-w-5xl mx-auto text-center relative z-10">
+                <h1 data-id="35" id="hero-headline-s9t0" class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight tracking-tight mb-6">
+                    One Call. Every System.<br data-id="36" class="hidden sm:inline" /> Every Property.
+                </h1>
+                <p data-id="37" id="hero-sub-u1v2" class="text-base sm:text-lg md:text-xl text-slate-muted max-w-3xl mx-auto mb-10 leading-relaxed">
+                    Volusia County's only single-vendor solution for HVAC, security, landscaping, storm services &amp; IT — built for HOAs, Airbnbs, and small commercial properties.
+                </p>
+                <div data-id="38" class="flex flex-col sm:flex-row gap-4 justify-center mb-14">
+                    <a data-id="39" href="#contact" id="hero-cta1-w3x4" class="btn-amber bg-amber text-white font-bold text-base md:text-lg px-8 py-4 rounded-xl shadow-lg shadow-amber/20 inline-flex items-center justify-center gap-2">
+                        Get My Free Property Assessment
+                        <i data-id="40" data-lucide="arrow-right" class="w-5 h-5"></i>
+                    </a>
+                    <a data-id="41" href="#pricing" id="hero-cta2-y5z6" class="btn-outline border-2 border-white/30 text-white font-semibold text-base md:text-lg px-8 py-4 rounded-xl inline-flex items-center justify-center gap-2">
+                        See Our Packages <span data-id="42" class="text-amber">↓</span>
+                    </a>
+                </div>
+
+                <!-- Trust Badges -->
+                <div data-id="43" id="trust-badges-a2b3" class="flex flex-wrap justify-center gap-3 md:gap-4">
+                    <div data-id="44" class="trust-badge flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-2">
+                        <i data-id="45" data-lucide="shield-check" class="w-4 h-4 text-amber"></i>
+                        <span data-id="46" class="text-white/80 text-xs font-medium">EPA Level II Certified</span>
+                    </div>
+                    <div data-id="47" class="trust-badge flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-2">
+                        <i data-id="48" data-lucide="badge-check" class="w-4 h-4 text-amber"></i>
+                        <span data-id="49" class="text-white/80 text-xs font-medium">Licensed &amp; Insured</span>
+                    </div>
+                    <div data-id="50" class="trust-badge flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-2">
+                        <i data-id="51" data-lucide="map-pin" class="w-4 h-4 text-amber"></i>
+                        <span data-id="52" class="text-white/80 text-xs font-medium">Local Ormond Beach</span>
+                    </div>
+                    <div data-id="53" class="trust-badge flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-2">
+                        <i data-id="54" data-lucide="building-2" class="w-4 h-4 text-amber"></i>
+                        <span data-id="55" class="text-white/80 text-xs font-medium">HOA Specialists</span>
+                    </div>
+                    <div data-id="56" class="trust-badge flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-2">
+                        <i data-id="57" data-lucide="cloud-lightning" class="w-4 h-4 text-amber"></i>
+                        <span data-id="58" class="text-white/80 text-xs font-medium">Storm-Ready 24/7</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== SOCIAL PROOF TICKER ===================== -->
+        <section data-id="59" id="ticker-c4d5" class="bg-navy-dark py-4 px-4 md:px-8 border-t border-white/5">
+            <div data-id="60" class="max-w-6xl mx-auto flex flex-wrap justify-center md:justify-between items-center gap-4 md:gap-6">
+                <div data-id="61" class="stat-pill flex items-center gap-2">
+                    <i data-id="62" data-lucide="layers" class="w-4 h-4 text-amber"></i>
+                    <span data-id="63" class="text-white/70 text-xs md:text-sm font-medium">25+ Services Under One Roof</span>
+                </div>
+                <div data-id="64" class="stat-pill flex items-center gap-2">
+                    <i data-id="65" data-lucide="zap" class="w-4 h-4 text-amber"></i>
+                    <span data-id="66" class="text-white/70 text-xs md:text-sm font-medium">4-Hour Emergency Response</span>
+                </div>
+                <div data-id="67" class="stat-pill flex items-center gap-2">
+                    <i data-id="68" data-lucide="users" class="w-4 h-4 text-amber"></i>
+                    <span data-id="69" class="text-white/70 text-xs md:text-sm font-medium">HOA Specialists</span>
+                </div>
+                <div data-id="70" class="stat-pill flex items-center gap-2">
+                    <i data-id="71" data-lucide="compass" class="w-4 h-4 text-amber"></i>
+                    <span data-id="72" class="text-white/70 text-xs md:text-sm font-medium">Serving All Volusia County</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== PROBLEM SECTION ===================== -->
+        <section data-id="73" id="about" class="bg-white py-16 md:py-24 px-4 md:px-8">
+            <div data-id="74" class="max-w-5xl mx-auto">
+                <div data-id="75" class="text-center mb-12 md:mb-16">
+                    <span data-id="76" class="inline-block bg-amber/10 text-amber font-semibold text-xs uppercase tracking-widest px-4 py-1.5 rounded-full mb-4">The Problem</span>
+                    <h2 data-id="77" id="problem-headline-e6f7" class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-navy mb-6 tracking-tight">
+                        Tired of juggling 6 different contractors?
+                    </h2>
+                    <p data-id="78" id="problem-body-g8h9" class="text-gray-600 text-base md:text-lg max-w-3xl mx-auto leading-relaxed">
+                        Most HOA boards and property owners spend hours every month coordinating separate vendors for HVAC, landscaping, tech, and repairs — with no accountability when something goes wrong. Managed Property Systems replaces all of them with <strong data-id="79" class="text-navy">one local team, one contract, and one monthly report.</strong>
+                    </p>
+                </div>
+
+                <!-- Pain Point Cards -->
+                <div data-id="80" class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    <div data-id="81" class="pain-card bg-red-50 border border-red-100 rounded-2xl p-6 md:p-8 text-center">
+                        <div data-id="82" class="w-14 h-14 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
+                            <i data-id="83" data-lucide="alert-triangle" class="w-7 h-7 text-red-500"></i>
+                        </div>
+                        <h3 data-id="84" class="font-bold text-navy text-lg mb-2">No Accountability</h3>
+                        <p data-id="85" class="text-gray-600 text-sm leading-relaxed">When something breaks, every vendor points the finger at someone else. You're stuck in the middle.</p>
+                    </div>
+                    <div data-id="86" class="pain-card bg-yellow-50 border border-yellow-100 rounded-2xl p-6 md:p-8 text-center">
+                        <div data-id="87" class="w-14 h-14 bg-yellow-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
+                            <i data-id="88" data-lucide="circle-dollar-sign" class="w-7 h-7 text-yellow-600"></i>
+                        </div>
+                        <h3 data-id="89" class="font-bold text-navy text-lg mb-2">Budget Surprises</h3>
+                        <p data-id="90" class="text-gray-600 text-sm leading-relaxed">Unpredictable invoices from multiple contractors make budgeting a guessing game.</p>
+                    </div>
+                    <div data-id="91" class="pain-card bg-orange-50 border border-orange-100 rounded-2xl p-6 md:p-8 text-center">
+                        <div data-id="92" class="w-14 h-14 bg-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-5">
+                            <i data-id="93" data-lucide="clock" class="w-7 h-7 text-orange-500"></i>
+                        </div>
+                        <h3 data-id="94" class="font-bold text-navy text-lg mb-2">No-Show Vendors</h3>
+                        <p data-id="95" class="text-gray-600 text-sm leading-relaxed">Missed appointments and radio silence when you need someone most — especially in emergencies.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== SERVICES GRID ===================== -->
+        <section data-id="96" id="services" class="bg-slate-soft py-16 md:py-24 px-4 md:px-8">
+            <div data-id="97" class="max-w-6xl mx-auto">
+                <div data-id="98" class="text-center mb-12 md:mb-16">
+                    <span data-id="99" class="inline-block bg-amber/10 text-amber font-semibold text-xs uppercase tracking-widest px-4 py-1.5 rounded-full mb-4">Our Services</span>
+                    <h2 data-id="100" id="services-headline-i0j1" class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-navy tracking-tight">
+                        Everything Your Property Needs. One Team.
+                    </h2>
+                </div>
+
+                <div data-id="101" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- HVAC -->
+                    <div data-id="102" class="service-card bg-white rounded-2xl p-6 md:p-8 border border-gray-100">
+                        <div data-id="103" class="w-12 h-12 bg-amber/10 rounded-xl flex items-center justify-center mb-5">
+                            <i data-id="104" data-lucide="thermometer" class="w-6 h-6 text-amber"></i>
+                        </div>
+                        <h3 data-id="105" class="font-bold text-navy text-lg mb-2">HVAC &amp; Refrigerant</h3>
+                        <p data-id="106" class="text-gray-600 text-sm leading-relaxed">EPA Level II certified maintenance and emergency response. Quarterly PM plans keep systems running through Florida's brutal summers.</p>
+                    </div>
+                    <!-- Security -->
+                    <div data-id="107" class="service-card bg-white rounded-2xl p-6 md:p-8 border border-gray-100">
+                        <div data-id="108" class="w-12 h-12 bg-amber/10 rounded-xl flex items-center justify-center mb-5">
+                            <i data-id="109" data-lucide="camera" class="w-6 h-6 text-amber"></i>
+                        </div>
+                        <h3 data-id="110" class="font-bold text-navy text-lg mb-2">Security &amp; Low Voltage</h3>
+                        <p data-id="111" class="text-gray-600 text-sm leading-relaxed">Camera systems, access control, smart locks, and intercom installation and support. Complete visibility and control for your property.</p>
+                    </div>
+                    <!-- Landscaping -->
+                    <div data-id="112" class="service-card bg-white rounded-2xl p-6 md:p-8 border border-gray-100">
+                        <div data-id="113" class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-5">
+                            <i data-id="114" data-lucide="trees" class="w-6 h-6 text-green-600"></i>
+                        </div>
+                        <h3 data-id="115" class="font-bold text-navy text-lg mb-2">Landscaping &amp; Grounds</h3>
+                        <p data-id="116" class="text-gray-600 text-sm leading-relaxed">Weekly lawn care, bed maintenance, irrigation checks, and seasonal cleanup. Your curb appeal, handled.</p>
+                    </div>
+                    <!-- Storm -->
+                    <div data-id="117" class="service-card bg-white rounded-2xl p-6 md:p-8 border border-gray-100">
+                        <div data-id="118" class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-5">
+                            <i data-id="119" data-lucide="cloud-lightning" class="w-6 h-6 text-blue-600"></i>
+                        </div>
+                        <h3 data-id="120" class="font-bold text-navy text-lg mb-2">Storm &amp; Environmental</h3>
+                        <p data-id="121" class="text-gray-600 text-sm leading-relaxed">Pre-storm preparation, post-storm priority response, and insurance documentation. We're ready before the forecast says to worry.</p>
+                    </div>
+                    <!-- IT -->
+                    <div data-id="122" class="service-card bg-white rounded-2xl p-6 md:p-8 border border-gray-100">
+                        <div data-id="123" class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-5">
+                            <i data-id="124" data-lucide="wifi" class="w-6 h-6 text-purple-600"></i>
+                        </div>
+                        <h3 data-id="125" class="font-bold text-navy text-lg mb-2">IT &amp; WiFi Infrastructure</h3>
+                        <p data-id="126" class="text-gray-600 text-sm leading-relaxed">Property-wide WiFi, guest networks for STRs, and remote monitoring. Connectivity that just works.</p>
+                    </div>
+                    <!-- Inspections -->
+                    <div data-id="127" class="service-card bg-white rounded-2xl p-6 md:p-8 border border-gray-100">
+                        <div data-id="128" class="w-12 h-12 bg-navy/10 rounded-xl flex items-center justify-center mb-5">
+                            <i data-id="129" data-lucide="clipboard-check" class="w-6 h-6 text-navy"></i>
+                        </div>
+                        <h3 data-id="130" class="font-bold text-navy text-lg mb-2">Property Inspections</h3>
+                        <p data-id="131" class="text-gray-600 text-sm leading-relaxed">Monthly photo inspection reports delivered to your inbox. Transparent documentation your HOA board or insurer can rely on.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== WHO WE SERVE ===================== -->
+        <section data-id="132" id="who-we-serve-k2l3" class="bg-white py-16 md:py-24 px-4 md:px-8">
+            <div data-id="133" class="max-w-6xl mx-auto">
+                <div data-id="134" class="text-center mb-12 md:mb-16">
+                    <span data-id="135" class="inline-block bg-amber/10 text-amber font-semibold text-xs uppercase tracking-widest px-4 py-1.5 rounded-full mb-4">Who We Serve</span>
+                    <h2 data-id="136" id="audience-headline-m4n5" class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-navy tracking-tight">
+                        Built for Communities Like Yours
+                    </h2>
+                </div>
+
+                <div data-id="137" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div data-id="138" class="audience-card bg-slate-soft rounded-2xl p-8 border border-gray-100 text-center">
+                        <div data-id="139" class="w-16 h-16 bg-amber/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                            <i data-id="140" data-lucide="building" class="w-8 h-8 text-amber"></i>
+                        </div>
+                        <h3 data-id="141" class="font-bold text-navy text-xl mb-3">HOAs &amp; Residential Communities</h3>
+                        <p data-id="142" class="text-gray-600 text-sm leading-relaxed">Single-vendor simplicity for communities of any size. Monthly reports, dedicated account manager, no juggling contractors.</p>
+                    </div>
+                    <div data-id="143" class="audience-card bg-slate-soft rounded-2xl p-8 border border-gray-100 text-center">
+                        <div data-id="144" class="w-16 h-16 bg-amber/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                            <i data-id="145" data-lucide="home" class="w-8 h-8 text-amber"></i>
+                        </div>
+                        <h3 data-id="146" class="font-bold text-navy text-xl mb-3">Airbnb &amp; Short-Term Rentals</h3>
+                        <p data-id="147" class="text-gray-600 text-sm leading-relaxed">Between-guest readiness: smart locks, WiFi, HVAC checks, storm prep. Portfolio owners get per-property pricing.</p>
+                    </div>
+                    <div data-id="148" class="audience-card bg-slate-soft rounded-2xl p-8 border border-gray-100 text-center">
+                        <div data-id="149" class="w-16 h-16 bg-amber/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                            <i data-id="150" data-lucide="store" class="w-8 h-8 text-amber"></i>
+                        </div>
+                        <h3 data-id="151" class="font-bold text-navy text-xl mb-3">Small Commercial Properties</h3>
+                        <p data-id="152" class="text-gray-600 text-sm leading-relaxed">Strip centers, offices, and retail — full maintenance coverage from $599/month.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== PRICING SECTION ===================== -->
+        <section data-id="153" id="pricing" class="bg-slate-soft py-16 md:py-24 px-4 md:px-8">
+            <div data-id="154" class="max-w-6xl mx-auto">
+                <div data-id="155" class="text-center mb-12 md:mb-16">
+                    <span data-id="156" class="inline-block bg-amber/10 text-amber font-semibold text-xs uppercase tracking-widest px-4 py-1.5 rounded-full mb-4">Pricing</span>
+                    <h2 data-id="157" id="pricing-headline-o6p7" class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-navy tracking-tight mb-4">
+                        Transparent Pricing. No Surprise Bills.
+                    </h2>
+                    <p data-id="158" class="text-gray-600 text-base md:text-lg max-w-2xl mx-auto">
+                        Flat monthly plans. No long-term contracts. Cancel with 30 days notice.
+                    </p>
+                </div>
+
+                <!-- HOA Tiers -->
+                <div data-id="159" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                    <!-- Essential -->
+                    <div data-id="160" class="pricing-card bg-white rounded-2xl p-6 md:p-8 border border-gray-200 flex flex-col">
+                        <div data-id="161" class="mb-6">
+                            <h3 data-id="162" class="font-bold text-navy text-sm uppercase tracking-widest mb-1">Essential</h3>
+                            <div data-id="163" class="flex items-baseline gap-1">
+                                <span data-id="164" class="text-3xl md:text-4xl font-black text-navy">$45</span>
+                                <span data-id="165" class="text-gray-500 text-sm">/unit/mo</span>
+                            </div>
+                            <p data-id="166" class="text-gray-500 text-xs mt-1">Minimum $900/mo</p>
+                        </div>
+                        <ul data-id="167" class="space-y-3 mb-8 flex-grow">
+                            <li data-id="168" class="flex items-start gap-2.5 text-sm text-gray-700">
+                                <i data-id="169" data-lucide="check" class="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0"></i>
+                                Bi-annual HVAC PM
+                            </li>
+                            <li data-id="170" class="flex items-start gap-2.5 text-sm text-gray-700">
+                                <i data-id="171" data-lucide="check" class="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0"></i>
+                                Bi-weekly landscaping
+                            </li>
+                            <li data-id="172" class="flex items-start gap-2.5 text-sm text-gray-700">
+                                <i data-id="173" data-lucide="check" class="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0"></i>
+                                Annual security audit
+                            </li>
+                            <li data-id="174" class="flex items-start gap-2.5 text-sm text-gray-700">
+                                <i data-id="175" data-lucide="check" class="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0"></i>
+                                24-hr emergency SLA
+                            </li>
+                        </ul>
+                        <a data-id="176" href="#contact" class="block text-center btn-amber bg-navy text-white font-semibold py-3 rounded-xl hover:bg-navy-light transition-colors">
+                            Get a Quote
+                        </a>
+                    </div>
+
+                    <!-- Professional (Featured) -->
+                    <div data-id="177" class="pricing-card pricing-featured bg-white rounded-2xl p-6 md:p-8 border-2 border-amber flex flex-col relative">
+                        <div data-id="178" class="absolute -top-3.5 left-1/2 -translate-x-1/2">
+                            <span data-id="179" class="bg-amber text-white text-xs font-bold uppercase tracking-wider px-4 py-1.5 rounded-full">Most Popular</span>
+                        </div>
+                        <div data-id="180" class="mb-6 mt-2">
+                            <h3 data-id="181" class="font-bold text-amber text-sm uppercase tracking-widest mb-1">Professional</h3>
+                            <div data-id="182" class="flex items-baseline gap-1">
+                                <span data-id="183" class="text-3xl md:text-4xl font-black text-navy">$35</span>
+                                <span data-id="184" class="text-gray-500 text-sm">/unit/mo</span>
+                            </div>
+                            <p data-id="185" class="text-gray-500 text-xs mt-1">Minimum $2,500/mo</p>
+                        </div>
+                        <ul data-id="186" class="space-y-3 mb-8 flex-grow">
+                            <li data-id="187" class="flex items-start gap-2.5 text-sm text-gray-700">
+                                <i data-id="188" data-lucide="check" class="w-4 h-4 text-amber mt-0.5 flex-shrink-0"></i>
+                                Quarterly HVAC PM
+                            </li>
+                            <li data-id="189" class="flex items-start gap-2.5 text-sm text-gray-700">
+                                <i data-id="190" data-lucide="check" class="w-4 h-4 text-amber mt-0.5 flex-shrink-0"></i>
+                                Weekly landscaping
+                            </li>
+                            <li data-id="191" class="flex items-start gap-2.5 text-sm text-gray-700">
+                                <i data-id="192" data-lucide="check" class="w-4 h-4 text-amber mt-0.5 flex-shrink-0"></i>
+                                Common area WiFi
+                            </li>
+                            <li data-id="193" class="flex items-start gap-2.5 text-sm text-gray-700">
+                                <i data-id="194" data-lucide="check" class="w-4 h-4 text-amber mt-0.5 flex-shrink-0"></i>
+                                12-hr emergency SLA
+                            </li>
+                            <li data-id="195" class="flex items-start gap-2.5 text-sm text-gray-700">
+                                <i data-id="196" data-lucide="check" class="w-4 h-4 text-amber mt-0.5 flex-shrink-0"></i>
+                                Bi-weekly reports
+                            </li>
+                        </ul>
+                        <a data-id="197" href="#contact" class="block text-center btn-amber bg-amber text-white font-semibold py-3 rounded-xl">
+                            Get a Quote
+                        </a>
+                    </div>
+
+                    <!-- Command -->
+                    <div data-id="198" class="pricing-card bg-white rounded-2xl p-6 md:p-8 border border-gray-200 flex flex-col">
+                        <div data-id="199" class="mb-6">
+                            <h3 data-id="200" class="font-bold text-navy text-sm uppercase tracking-widest mb-1">Command</h3>
+                            <div data-id="201" class="flex items-baseline gap-1">
+                                <span data-id="202" class="text-3xl md:text-4xl font-black text-navy">$25</span>
+                                <span data-id="203" class="text-gray-500 text-sm">/unit/mo</span>
+                            </div>
+                            <p data-id="204" class="text-gray-500 text-xs mt-1">Minimum $5,000/mo</p>
+                        </div>
+                        <ul data-id="205" class="space-y-3 mb-8 flex-grow">
+                            <li data-id="206" class="flex items-start gap-2.5 text-sm text-gray-700">
+                                <i data-id="207" data-lucide="check" class="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0"></i>
+                                Monthly HVAC rounds
+                            </li>
+                            <li data-id="208" class="flex items-start gap-2.5 text-sm text-gray-700">
+                                <i data-id="209" data-lucide="check" class="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0"></i>
+                                Weekly full-service grounds
+                            </li>
+                            <li data-id="210" class="flex items-start gap-2.5 text-sm text-gray-700">
+                                <i data-id="211" data-lucide="check" class="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0"></i>
+                                Full IT buildout
+                            </li>
+                            <li data-id="212" class="flex items-start gap-2.5 text-sm text-gray-700">
+                                <i data-id="213" data-lucide="check" class="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0"></i>
+                                4-hr emergency SLA
+                            </li>
+                            <li data-id="214" class="flex items-start gap-2.5 text-sm text-gray-700">
+                                <i data-id="215" data-lucide="check" class="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0"></i>
+                                Dedicated account manager
+                            </li>
+                        </ul>
+                        <a data-id="216" href="#contact" class="block text-center btn-amber bg-navy text-white font-semibold py-3 rounded-xl hover:bg-navy-light transition-colors">
+                            Get a Quote
+                        </a>
+                    </div>
+                </div>
+
+                <!-- STR Plans -->
+                <div data-id="217" class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <div data-id="218" class="bg-white rounded-xl border border-gray-200 px-6 py-4 flex items-center gap-4">
+                        <div data-id="219">
+                            <span data-id="220" class="font-bold text-navy text-sm uppercase tracking-wider">STR Starter</span>
+                            <div data-id="221" class="text-xs text-gray-500">Single property</div>
+                        </div>
+                        <span data-id="222" class="text-2xl font-black text-navy">$299<span data-id="223" class="text-sm font-normal text-gray-500">/property</span></span>
+                    </div>
+                    <div data-id="224" class="bg-white rounded-xl border-2 border-amber px-6 py-4 flex items-center gap-4 relative">
+                        <div data-id="225" class="absolute -top-2.5 right-4">
+                            <span data-id="226" class="bg-amber text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full">Best Value</span>
+                        </div>
+                        <div data-id="227">
+                            <span data-id="228" class="font-bold text-navy text-sm uppercase tracking-wider">STR Pro</span>
+                            <div data-id="229" class="text-xs text-gray-500">3+ properties</div>
+                        </div>
+                        <span data-id="230" class="text-2xl font-black text-navy">$199<span data-id="231" class="text-sm font-normal text-gray-500">/property</span></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== FAQ SECTION ===================== -->
+        <section data-id="232" id="faq-q8r9" class="bg-white py-16 md:py-24 px-4 md:px-8">
+            <div data-id="233" class="max-w-3xl mx-auto">
+                <div data-id="234" class="text-center mb-12">
+                    <span data-id="235" class="inline-block bg-amber/10 text-amber font-semibold text-xs uppercase tracking-widest px-4 py-1.5 rounded-full mb-4">FAQ</span>
+                    <h2 data-id="236" id="faq-headline-s0t1" class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-navy tracking-tight">
+                        Common Questions
+                    </h2>
+                </div>
+
+                <div data-id="237" class="space-y-3">
+                    <!-- FAQ 1 -->
+                    <div data-id="238" class="faq-item border border-gray-200 rounded-xl overflow-hidden">
+                        <button data-id="239" class="faq-toggle w-full flex items-center justify-between p-5 md:p-6 text-left bg-white hover:bg-gray-50 transition-colors" aria-expanded="false">
+                            <span data-id="240" class="font-semibold text-navy text-sm md:text-base pr-4">Do you require long-term contracts?</span>
+                            <i data-id="241" data-lucide="chevron-down" class="faq-chevron w-5 h-5 text-gray-400 flex-shrink-0"></i>
+                        </button>
+                        <div data-id="242" class="faq-answer px-5 md:px-6">
+                            <p data-id="243" class="text-gray-600 text-sm leading-relaxed pb-5 md:pb-6">No. All plans are month-to-month. Annual prepay saves 10–12%.</p>
+                        </div>
+                    </div>
+                    <!-- FAQ 2 -->
+                    <div data-id="244" class="faq-item border border-gray-200 rounded-xl overflow-hidden">
+                        <button data-id="245" class="faq-toggle w-full flex items-center justify-between p-5 md:p-6 text-left bg-white hover:bg-gray-50 transition-colors" aria-expanded="false">
+                            <span data-id="246" class="font-semibold text-navy text-sm md:text-base pr-4">How fast do you respond to emergencies?</span>
+                            <i data-id="247" data-lucide="chevron-down" class="faq-chevron w-5 h-5 text-gray-400 flex-shrink-0"></i>
+                        </button>
+                        <div data-id="248" class="faq-answer px-5 md:px-6">
+                            <p data-id="249" class="text-gray-600 text-sm leading-relaxed pb-5 md:pb-6">Depends on plan: 4 hours (Command/STR Pro), 12 hours (Professional), 24 hours (Essential/Starter).</p>
+                        </div>
+                    </div>
+                    <!-- FAQ 3 -->
+                    <div data-id="250" class="faq-item border border-gray-200 rounded-xl overflow-hidden">
+                        <button data-id="251" class="faq-toggle w-full flex items-center justify-between p-5 md:p-6 text-left bg-white hover:bg-gray-50 transition-colors" aria-expanded="false">
+                            <span data-id="252" class="font-semibold text-navy text-sm md:text-base pr-4">Are you licensed and insured in Florida?</span>
+                            <i data-id="253" data-lucide="chevron-down" class="faq-chevron w-5 h-5 text-gray-400 flex-shrink-0"></i>
+                        </button>
+                        <div data-id="254" class="faq-answer px-5 md:px-6">
+                            <p data-id="255" class="text-gray-600 text-sm leading-relaxed pb-5 md:pb-6">Yes. We carry full general liability and are EPA Level II certified for HVAC refrigerant work.</p>
+                        </div>
+                    </div>
+                    <!-- FAQ 4 -->
+                    <div data-id="256" class="faq-item border border-gray-200 rounded-xl overflow-hidden">
+                        <button data-id="257" class="faq-toggle w-full flex items-center justify-between p-5 md:p-6 text-left bg-white hover:bg-gray-50 transition-colors" aria-expanded="false">
+                            <span data-id="258" class="font-semibold text-navy text-sm md:text-base pr-4">Do you serve both HOAs and individual Airbnb owners?</span>
+                            <i data-id="259" data-lucide="chevron-down" class="faq-chevron w-5 h-5 text-gray-400 flex-shrink-0"></i>
+                        </button>
+                        <div data-id="260" class="faq-answer px-5 md:px-6">
+                            <p data-id="261" class="text-gray-600 text-sm leading-relaxed pb-5 md:pb-6">Yes. We have packages designed specifically for each — community-level contracts for HOAs and per-property plans for STR owners.</p>
+                        </div>
+                    </div>
+                    <!-- FAQ 5 -->
+                    <div data-id="262" class="faq-item border border-gray-200 rounded-xl overflow-hidden">
+                        <button data-id="263" class="faq-toggle w-full flex items-center justify-between p-5 md:p-6 text-left bg-white hover:bg-gray-50 transition-colors" aria-expanded="false">
+                            <span data-id="264" class="font-semibold text-navy text-sm md:text-base pr-4">What happens during hurricane season?</span>
+                            <i data-id="265" data-lucide="chevron-down" class="faq-chevron w-5 h-5 text-gray-400 flex-shrink-0"></i>
+                        </button>
+                        <div data-id="266" class="faq-answer px-5 md:px-6">
+                            <p data-id="267" class="text-gray-600 text-sm leading-relaxed pb-5 md:pb-6">Every plan includes storm response. Command and STR Pro clients get priority 4-hour post-storm assessment and pre-storm prep services.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================== CONTACT / CTA SECTION ===================== -->
+        <section data-id="268" id="contact" class="bg-navy py-16 md:py-24 px-4 md:px-8 relative overflow-hidden">
+            <div data-id="269" class="absolute inset-0 opacity-[0.03]" style="background-image: radial-gradient(circle at 1px 1px, white 1px, transparent 0); background-size: 40px 40px;"></div>
+            <div data-id="270" class="max-w-4xl mx-auto relative z-10">
+                <div data-id="271" class="text-center mb-10 md:mb-14">
+                    <span data-id="272" class="inline-block bg-amber/20 text-amber font-semibold text-xs uppercase tracking-widest px-4 py-1.5 rounded-full mb-4">Get Started</span>
+                    <h2 data-id="273" id="contact-headline-u2v3" class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white tracking-tight mb-4">
+                        Ready to simplify your property management?
+                    </h2>
+                    <p data-id="274" class="text-slate-muted text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
+                        We're a local Ormond Beach team that picks up the phone. Reach out for your free property assessment — no obligation, no sales pressure.
+                    </p>
+                </div>
+
+                <div data-id="275" class="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 md:p-10">
+                    <form data-id="276" id="contact-form-w4x5" class="space-y-5">
+                        <div data-id="277" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div data-id="278">
+                                <label data-id="279" for="form-name-y6z7" class="block text-white/80 text-sm font-medium mb-1.5">Name</label>
+                                <input data-id="280" id="form-name-y6z7" type="text" placeholder="Your full name" class="form-input w-full bg-white/10 border border-white/15 rounded-xl px-4 py-3 text-white placeholder-white/40 text-sm" />
+                            </div>
+                            <div data-id="281">
+                                <label data-id="282" for="form-email-a8b9" class="block text-white/80 text-sm font-medium mb-1.5">Email</label>
+                                <input data-id="283" id="form-email-a8b9" type="email" placeholder="you@example.com" class="form-input w-full bg-white/10 border border-white/15 rounded-xl px-4 py-3 text-white placeholder-white/40 text-sm" />
+                            </div>
+                        </div>
+                        <div data-id="284" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div data-id="285">
+                                <label data-id="286" for="form-phone-c0d1" class="block text-white/80 text-sm font-medium mb-1.5">Phone</label>
+                                <input data-id="287" id="form-phone-c0d1" type="tel" placeholder="(386) 555-0000" class="form-input w-full bg-white/10 border border-white/15 rounded-xl px-4 py-3 text-white placeholder-white/40 text-sm" />
+                            </div>
+                            <div data-id="288">
+                                <label data-id="289" for="form-type-e2f3" class="block text-white/80 text-sm font-medium mb-1.5">Property Type</label>
+                                <select data-id="290" id="form-type-e2f3" class="form-input w-full bg-white/10 border border-white/15 rounded-xl px-4 py-3 text-white/70 text-sm appearance-none cursor-pointer">
+                                    <option data-id="291" value="" class="text-gray-900">Select property type</option>
+                                    <option data-id="292" value="hoa" class="text-gray-900">HOA</option>
+                                    <option data-id="293" value="str" class="text-gray-900">Airbnb / STR</option>
+                                    <option data-id="294" value="commercial" class="text-gray-900">Commercial</option>
+                                    <option data-id="295" value="other" class="text-gray-900">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div data-id="296">
+                            <label data-id="297" for="form-message-g4h5" class="block text-white/80 text-sm font-medium mb-1.5">Message</label>
+                            <textarea data-id="298" id="form-message-g4h5" rows="4" placeholder="Tell us about your property and what you need..." class="form-input w-full bg-white/10 border border-white/15 rounded-xl px-4 py-3 text-white placeholder-white/40 text-sm resize-none"></textarea>
+                        </div>
+                        <button data-id="299" id="form-submit-i6j7" type="submit" class="btn-amber w-full bg-amber text-white font-bold text-base py-4 rounded-xl flex items-center justify-center gap-2">
+                            Request Free Assessment
+                            <i data-id="300" data-lucide="send" class="w-5 h-5"></i>
+                        </button>
+                    </form>
+
+                    <!-- Confirmation Message -->
+                    <div data-id="301" id="form-success-k8l9" class="hidden text-center py-8">
+                        <div data-id="302" class="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i data-id="303" data-lucide="check-circle" class="w-8 h-8 text-green-400"></i>
+                        </div>
+                        <h3 data-id="304" class="text-white text-xl font-bold mb-2">Thank You!</h3>
+                        <p data-id="305" class="text-slate-muted text-sm">We've received your request and will be in touch within 24 hours.</p>
+                    </div>
+
+                    <!-- Contact Info -->
+                    <div data-id="306" class="mt-8 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-center gap-6 text-sm">
+                        <div data-id="307" class="flex items-center gap-2 text-white/60">
+                            <i data-id="308" data-lucide="phone" class="w-4 h-4 text-amber"></i>
+                            <span data-id="309">850-943-5857</span>
+                        </div>
+                        <div data-id="310" class="flex items-center gap-2 text-white/60">
+                            <i data-id="311" data-lucide="mail" class="w-4 h-4 text-amber"></i>
+                            <span data-id="312">Treetominc@gmail.com</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ===================== FOOTER ===================== -->
+    <footer data-id="313" id="footer-m0n1" class="bg-navy-dark py-10 px-4 md:px-8 border-t border-white/5">
+        <div data-id="314" class="max-w-6xl mx-auto">
+            <div data-id="315" class="flex flex-col md:flex-row items-center justify-between gap-6 mb-8">
+                <!-- Logo -->
+                <div data-id="316" class="flex items-center gap-3">
+                    <div data-id="317" class="w-9 h-9 bg-amber rounded-lg flex items-center justify-center">
+                        <span data-id="318" class="text-white font-black text-base">MPS</span>
+                    </div>
+                    <span data-id="319" class="text-white font-bold text-sm">Managed Property Systems</span>
+                </div>
+                <!-- Links -->
+                <nav data-id="320" class="flex items-center gap-6">
+                    <a data-id="321" href="#services" class="text-white/50 hover:text-white text-sm transition-colors">Services</a>
+                    <a data-id="322" href="#pricing" class="text-white/50 hover:text-white text-sm transition-colors">Pricing</a>
+                    <a data-id="323" href="#contact" class="text-white/50 hover:text-white text-sm transition-colors">Contact</a>
+                    <a data-id="324" href="#" class="text-white/50 hover:text-white text-sm transition-colors">Privacy Policy</a>
+                </nav>
+            </div>
+            <div data-id="325" class="border-t border-white/10 pt-6 flex flex-col md:flex-row items-center justify-between gap-3">
+                <p data-id="326" class="text-white/30 text-xs text-center md:text-left">
+                    &copy; 2026 Managed Property Systems LLC &nbsp;|&nbsp; Ormond Beach, FL &nbsp;|&nbsp; All Rights Reserved
+                </p>
+                <p data-id="327" class="text-white/30 text-xs">Made by Copilot</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ======= ICONS (Progressive Enhancement) =======
+        if (typeof lucide !== "undefined" && typeof lucide.createIcons === "function") {
+            lucide.createIcons();
+        }
+
+        // ======= MOBILE MENU =======
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn-k1l2');
+        const mobileMenu = document.getElementById('mobile-menu-m3n4');
+        const mobileMenuClose = document.getElementById('mobile-menu-close-o5p6');
+        const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+
+        if (mobileMenuBtn && mobileMenu && mobileMenuClose) {
+            mobileMenuBtn.addEventListener('click', function() {
+                mobileMenu.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+
+            mobileMenuClose.addEventListener('click', function() {
+                mobileMenu.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+
+            mobileNavLinks.forEach(function(link) {
+                link.addEventListener('click', function() {
+                    mobileMenu.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            });
+        }
+
+        // ======= STICKY NAV SHRINK =======
+        const navbar = document.getElementById('navbar-a1b2');
+        let lastScroll = 0;
+
+        window.addEventListener('scroll', function() {
+            const currentScroll = window.scrollY;
+            if (navbar) {
+                if (currentScroll > 60) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            }
+            lastScroll = currentScroll;
+        });
+
+        // ======= FAQ ACCORDION =======
+        const faqToggles = document.querySelectorAll('.faq-toggle');
+
+        faqToggles.forEach(function(toggle) {
+            toggle.addEventListener('click', function() {
+                const parent = this.closest('.faq-item');
+                const answer = parent.querySelector('.faq-answer');
+                const chevron = this.querySelector('.faq-chevron');
+                const isOpen = answer.classList.contains('open');
+
+                // Close all other FAQs
+                document.querySelectorAll('.faq-answer.open').forEach(function(openAnswer) {
+                    openAnswer.classList.remove('open');
+                    const openChevron = openAnswer.closest('.faq-item').querySelector('.faq-chevron');
+                    if (openChevron) openChevron.classList.remove('rotated');
+                    const openToggle = openAnswer.closest('.faq-item').querySelector('.faq-toggle');
+                    if (openToggle) openToggle.setAttribute('aria-expanded', 'false');
+                });
+
+                // Toggle current
+                if (!isOpen) {
+                    answer.classList.add('open');
+                    if (chevron) chevron.classList.add('rotated');
+                    this.setAttribute('aria-expanded', 'true');
+                }
+            });
+        });
+
+        // ======= CONTACT FORM =======
+        const contactForm = document.getElementById('contact-form-w4x5');
+        const formSuccess = document.getElementById('form-success-k8l9');
+
+        if (contactForm) {
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                // Simple validation
+                const name = document.getElementById('form-name-y6z7').value.trim();
+                const email = document.getElementById('form-email-a8b9').value.trim();
+
+                if (!name || !email) {
+                    // Shake effect on empty fields
+                    if (!name) {
+                        const nameInput = document.getElementById('form-name-y6z7');
+                        nameInput.style.borderColor = '#ef4444';
+                        setTimeout(function() { nameInput.style.borderColor = ''; }, 2000);
+                    }
+                    if (!email) {
+                        const emailInput = document.getElementById('form-email-a8b9');
+                        emailInput.style.borderColor = '#ef4444';
+                        setTimeout(function() { emailInput.style.borderColor = ''; }, 2000);
+                    }
+                    return;
+                }
+
+                // Show success
+                contactForm.style.display = 'none';
+                if (formSuccess) {
+                    formSuccess.classList.remove('hidden');
+                    // Re-init icons for the success checkmark
+                    if (typeof lucide !== "undefined" && typeof lucide.createIcons === "function") {
+                        lucide.createIcons();
+                    }
+                }
+            });
+        }
+
+        // ======= SMOOTH SCROLL for all anchor links =======
+        document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+            anchor.addEventListener('click', function(e) {
+                const targetId = this.getAttribute('href');
+                if (targetId && targetId !== '#') {
+                    const target = document.querySelector(targetId);
+                    if (target) {
+                        e.preventDefault();
+                        const navHeight = navbar ? navbar.offsetHeight : 0;
+                        const targetPosition = target.getBoundingClientRect().top + window.scrollY - navHeight;
+                        window.scrollTo({
+                            top: targetPosition,
+                            behavior: 'smooth'
+                        });
+                    }
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
